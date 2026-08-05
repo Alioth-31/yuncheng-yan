@@ -1,0 +1,48 @@
+# Dependencies and generated output
+node_modules/
+dist/
+unpackage/
+coverage/
+.cache/
+.vite/
+.worktrees/
+*.log
+logs/
+
+# Local environment and Android secrets
+.env
+.env.*
+!.env.example
+local.properties
+key.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.csr
+*.apk
+*.aab
+*.ipa
+
+# Credentials and private material
+credentials/
+credential/
+secrets/
+.secrets/
+keystore/
+keystores/
+certificates/
+id_rsa
+id_ed25519
+
+# IDE and OS noise
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

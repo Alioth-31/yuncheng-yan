@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+set -eu
+
+repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+script_path="$repo_root/scripts/Test-Governance.ps1"
+
+if command -v powershell.exe >/dev/null 2>&1; then
+  exec powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$script_path" -Mode PreCommit
+fi
+
+if command -v pwsh >/dev/null 2>&1; then
+  exec pwsh -NoProfile -ExecutionPolicy Bypass -File "$script_path" -Mode PreCommit
+fi
+
+echo 'Governance hook requires powershell.exe or pwsh.' >&2
+exit 127

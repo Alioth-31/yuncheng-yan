@@ -1,0 +1,48 @@
+name: Governance
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+      - 'agent/**'
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    name: governance
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+      - name: Run governance fixture tests
+        run: ./scripts/Test-Governance.Tests.ps1
+      - name: Run CI governance checks
+        env:
+          GOVERNANCE_EVENT_NAME: ${{ github.event_name }}
+          GOVERNANCE_PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          GOVERNANCE_PUSH_BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          if ($env:GOVERNANCE_EVENT_NAME -eq 'pull_request') {
+            $baseRef = $env:GOVERNANCE_PR_BASE_SHA
+          }
+          else {
+            $baseRef = $env:GOVERNANCE_PUSH_BEFORE_SHA
+            if ([string]::IsNullOrWhiteSpace($baseRef) -or $baseRef -match '^0+$') {
+              $baseRef = 'origin/main'
+            }
+          }
+          if ([string]::IsNullOrWhiteSpace($baseRef)) {
+            throw 'Governance BaseRef was not provided for this event.'
+          }
+          ./scripts/Test-Governance.ps1 -Mode Ci -BaseRef $baseRef
