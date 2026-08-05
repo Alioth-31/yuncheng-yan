@@ -23,3 +23,15 @@
 - 验证：PR #1 两个 governance check 均通过（32s/24s）；Ruleset 创建时间回读为 2026-08-05T19:14:51+08:00
 - 风险：公开仓库文件、分支和 Actions 日志可被下载检索；无绕过者（bypass_actors=[]）
 - 下一步：根任务继续审查并按授权推进后续工程实施
+
+## OP-20260805-001
+- 时间：2026-08-05T21:48:17+08:00
+- 任务：TASK-0101 产品需求与页面交互
+- 执行者：Codex
+- 分支：agent/TASK-0101-product-mvp
+- 批准阶段：文件生成，待用户批准暂存
+- 变更：定义三人私用 MVP 的身份入口、四个主入口、专注与短会话规则、每日打卡、历史删除、日/周/月统计、v0.2 延后项及待决项，并形成可测试页面流程与验收条件
+- 文件：docs/product/MVP_SCOPE.md、docs/product/PAGE_FLOWS.md、docs/product/ACCEPTANCE_CRITERIA.md、docs/tasks/TASK-0101_PRODUCT_MVP.md、docs/operations/PROJECT_LOG.md
+- 验证：已运行 git diff --check（退出码 0）、git status --short（退出码 0）和 git diff --stat（退出码 0）；完整命令、退出码与结果写入 D:\Codex\artifacts\intermediate\yunchengyan-phase1\TASK-0101-report.md；未运行代码、LeanCloud、HBuilderX、Android 或真机验证
+- 风险：账号校验、计时异常、打卡跨日、统计展示、同步冲突及 LeanCloud 类/ACL 仍待决；状态、路线图和决策记录留待后续事实回写任务统一更新
+- 下一步：控制线程与用户审阅；批准后再由根任务按授权执行暂存及后续 Git 流程
