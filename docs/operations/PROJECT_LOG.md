@@ -47,3 +47,15 @@
 - 验证：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-Governance.Tests.ps1（退出码 0，含 resolver 表驱动用例与完整治理夹具）；powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-Governance.ps1 -Mode Ci -BaseRef 99605091532e0a9c86f3c18391924e89bedc25a9（退出码 0）；resolver parser（退出码 0）；pwsh resolver 兼容检查（退出码 0）；git diff --check（退出码 0）
 - 风险：GitHub Actions 的真实 push/rebase 事件仍待由受控 PR 运行验证；未暂存、未提交、未推送
 - 下一步：控制任务与用户审阅四文件摘要，批准后才暂存并展示 staged diff，再继续提交/推送门禁
+
+## OP-20260805-002
+- 时间：2026-08-05T22:00:46+08:00
+- 任务：TASK-0301 数据、身份、ACL 与同步设计
+- 执行者：Codex
+- 分支：agent/TASK-0301-data-identity-design
+- 批准阶段：文件生成，待用户批准暂存
+- 变更：生成身份生命周期、邀请码原子兑换信任边界、本地优先同步职责、离线行为与最小权限目标设计；明确区分已确认、推荐但待批准和待决事项
+- 文件：docs/data/IDENTITY_ACL_SYNC.md、docs/tasks/TASK-0301_DATA_IDENTITY.md、docs/operations/PROJECT_LOG.md
+- 验证：按任务要求运行 git diff --check、git status --short 与 git diff --stat；完整命令和退出码记录于 TASK-0301-report.md；未暂存、未提交、未推送
+- 风险：LeanCloud 数据模型、逐资源 ACL、三人间数据可见性、受控邀请码兑换实现及逐实体同步冲突策略仍待用户批准，尚无真实环境验证
+- 下一步：控制线程与用户审阅文档并批准后续决策；获得明确授权后才可暂存或提交
