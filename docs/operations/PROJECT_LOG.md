@@ -59,3 +59,15 @@
 - 验证：按任务要求运行 git diff --check、git status --short 与 git diff --stat；完整命令和退出码记录于 TASK-0301-report.md；未暂存、未提交、未推送
 - 风险：LeanCloud 数据模型、逐资源 ACL、三人间数据可见性、受控邀请码兑换实现及逐实体同步冲突策略仍待用户批准，尚无真实环境验证
 - 下一步：控制线程与用户审阅文档并批准后续决策；获得明确授权后才可暂存或提交
+
+## OP-20260822-002
+- 时间：2026-08-22T23:35:38+08:00
+- 任务：TASK-0003 云程研 App 工程骨架
+- 执行者：Codex
+- 分支：agent/TASK-0003-app-scaffold
+- 批准阶段：文件生成与本地验证，待控制任务审查和用户批准暂存
+- 变更：从固定 DCloud 模板提交选择性导入经典 uni-app Vue 3 + TypeScript 骨架；新增固定 Node/npm wrapper、精确工具链、Pinia 工厂测试与最小静态首页；精确 pin @types/node 20.16.13，使 vue-tsc 同时覆盖测试源码；更新项目状态和交接文档
+- 文件：package.json、package-lock.json、Node/ESLint/Vitest/TypeScript 配置、scripts/Invoke-ProjectNode*.ps1、src、README.md、CHANGELOG.md、docs/ARCHITECTURE.md、docs/DECISIONS.md、docs/PROJECT_STATUS.md、docs/ROADMAP.md、docs/AI_HANDOFF.md、docs/tasks/TASK-0003_APP_SCAFFOLD.md、docs/operations/PROJECT_LOG.md
+- 验证：wrapper Node 22.23.1/npm 10.9.8 与真实进程测试退出码 0；npm ci 退出码 0；@types/node 20.16.13 全树 dedupe 且 type-check、lint、test:run（1/1）、build:h5、check 均退出码 0；mutation 使 type-check/check 退出码 2 且 Vitest 仍退出码 0；未运行 HBuilderX、Android 或真机验证
+- 风险：固定依赖树总计 67 个 npm audit 项，omit-dev 为 45（0 critical、11 high）；Vitest 3.2.4 critical 的 UI/API/Browser 路径当前未启用，留给独立依赖治理；H5 构建不证明 Android/真机可用；LeanCloud 类/ACL、同步冲突、Android 包名/SDK/签名仍待批准
+- 下一步：控制任务只读审查完整报告与工作树，验证后由用户决定暂存、提交和 PR；不得在本阶段接入凭证或 Android 发布配置

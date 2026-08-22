@@ -1,0 +1,12 @@
+{
+  "name": "云程研",
+  "appid": "",
+  "description": "三人私用的考研辅助 App",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "uniStatistics": {
+    "enable": false
+  },
+  "vueVersion": "3"
+}

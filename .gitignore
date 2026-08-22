@@ -1,5 +1,6 @@
 # Dependencies and generated output
 node_modules/
+.npm-cache/
 dist/
 unpackage/
 coverage/
