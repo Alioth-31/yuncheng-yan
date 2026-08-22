@@ -7,6 +7,7 @@
 | 状态管理 | Pinia；每次创建 app 使用独立实例 | 已确定 |
 | Node/npm | Node 22.23.1、npm 10.9.8，通过项目 wrapper 隔离调用 | 已确定 |
 | Node 类型兼容 | 精确使用 `@types/node@20.16.13`，兼容模板 TypeScript 4.9.5 与 Vitest/Vite 类型链 | 已确定 |
+| Vitest 安全补丁 | 精确使用 `vitest@3.2.7` 修复 `GHSA-5xrq-8626-4rwp`；保持 Vite 5.2.8、DCloud cohort、Vue 与 TypeScript 不变 | 已确定 |
 | 测试静态门禁 | `src/**/*.spec.ts` 与生产源码共用 `vue-tsc`；`check` 不排除测试 | 已确定 |
 | 工程模板 | `dcloudio/uni-preset-vue@6fb81ac3c5736b8b0a83e667b3ed90223d458dd8` | 已确定 |
 | DCloud 平台包 | `3.0.0-5020420260813003` | 已确定 |

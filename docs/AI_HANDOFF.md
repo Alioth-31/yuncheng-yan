@@ -2,7 +2,7 @@
 
 ## 当前任务
 
-TASK-0003 在 `agent/TASK-0003-app-scaffold`、基线 `2c9f928f2f6bb70ee42248d8e6ad3403b4fb78c1` 上建立工程骨架。TASK-0101 与 TASK-0301 已合并到该基线。
+TASK-0004 在 `agent/TASK-0004-vitest-security-patch`、基线 `2384968acd13205ad1496d6b26f505fa2b2b0aa4` 上只处理 Vitest 安全补丁。TASK-0101、TASK-0301 与 TASK-0003 已合并到该基线。
 
 实施 Agent 只写工作树，不暂存、提交、推送、创建 PR 或修改 Git/npm 持久配置；这些动作由控制任务另行批准和执行。
 
@@ -10,6 +10,7 @@ TASK-0003 在 `agent/TASK-0003-app-scaffold`、基线 `2c9f928f2f6bb70ee42248d8e
 
 - 固定 Node：`D:\node-v22.23.1-win-x64`（22.23.1）
 - 固定 npm：10.9.8
+- 固定 Vitest：3.2.7（Vite 5.2.8、vite-node 3.2.4 保持不变）
 - 固定 Node 类型：`@types/node@20.16.13`（与 TypeScript 4.9.5、Vitest/Vite 类型链实测兼容）
 - wrapper：`scripts/Invoke-ProjectNode.ps1 -Tool node|npm|npx [remaining arguments]`
 - cache：工作树 `.npm-cache/`
@@ -22,6 +23,7 @@ TASK-0003 在 `agent/TASK-0003-app-scaffold`、基线 `2c9f928f2f6bb70ee42248d8e
 - `src/main.ts` 保留 `createSSRApp`，每次安装新的 Pinia。
 - `src/stores/index.ts` 只有 `createAppPinia()`；测试证明两次调用不共享实例。
 - `tsconfig.json` 不排除测试；`npm run check` 会让 `vue-tsc` 静态检查 `pinia.spec.ts` 后再执行 Vitest。
+- `vitest.config.mts` 只启用 node 环境和 `src/**/*.spec.ts`，未启用 UI、API 或 Browser server。
 - 首页只显示“云程研”和“工程骨架已建立”。
 - manifest AppID 为空，不含 Android permissions、包名、SDK 或签名。
 - 尚无业务 store、LeanCloud、Repository、Mapper、Adapter、网络或 `uni.*` 调用。
@@ -31,14 +33,16 @@ TASK-0003 在 `agent/TASK-0003-app-scaffold`、基线 `2c9f928f2f6bb70ee42248d8e
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.Tests.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm ci
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm audit --json
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm audit --omit=dev --json
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm run check
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm run build:h5
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-Governance.Tests.ps1
 ```
 
-完整 RED/GREEN 和验证证据见 `D:\Codex\artifacts\intermediate\yunchengyan-phase1\TASK-0003-app-scaffold-report.md`。
+完整 RED/GREEN 和验证证据见 `D:\Codex\artifacts\intermediate\yunchengyan-phase1\TASK-0004-vitest-security-report.md`。
 
-依赖审计保持已知而未盲升：总计 67；`--omit=dev` 为 45（0 critical、11 high）。Vitest 3.2.4 的 critical 对应 UI server 文件读取/执行路径；本项目没有启用 Vitest UI、API 或 Browser server，但仍需后续独立治理。
+基线总审计 67 项时，唯一 critical 是 `vitest@3.2.4` 的 `GHSA-5xrq-8626-4rwp`；默认脚本和配置未启用其 UI/API/Browser server，但手工启用这些开发入口仍会形成可达路径。精确升级至 3.2.7 后总审计为 66 项（0 critical、13 high）；`--omit=dev` 前后均为 45 项（0 critical、11 high）。剩余风险需按 DCloud/Vite cohort 独立治理，不得运行 `npm audit fix`、broad overrides 或无验证的联动升级。
 
 ## 后续约束
 
