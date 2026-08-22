@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1150" viewBox="0 0 1400 1150" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="roadmap-title roadmap-desc">
+  <title id="roadmap-title">云程研 App 技术路线与实现进度</title>
+  <desc id="roadmap-desc">五层架构路线图。黑底白字节点表示已完成，白底黑字节点表示未完成，虚线灰色区域表示 v0.2 延后能力。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#111111"/>
+    </marker>
+    <style>
+      text { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; fill: #111111; }
+      .title { font-size: 30px; font-weight: 800; }
+      .subtitle { font-size: 14px; fill: #525963; }
+      .lane-title { font-size: 17px; font-weight: 800; }
+      .lane-sub { font-size: 11px; fill: #545b65; }
+      .node-title { font-size: 13px; font-weight: 750; text-anchor: middle; }
+      .node-sub { font-size: 10px; text-anchor: middle; }
+      .done-text { fill: #ffffff; }
+      .status-text { font-size: 10px; font-weight: 700; text-anchor: middle; }
+      .arrow-line { stroke: #111111; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1400" height="1150" fill="#ffffff"/>
+  <text x="34" y="47" class="title">云程研 App｜技术路线与实现进度</text>
+  <text x="35" y="76" class="subtitle">经典 uni-app · Vue 3 · TypeScript · Pinia · LeanCloud · 本地优先</text>
+
+  <rect x="1035" y="30" width="120" height="34" rx="17" fill="#111111"/>
+  <text x="1095" y="51" class="status-text done-text">已完成</text>
+  <rect x="1170" y="30" width="120" height="34" rx="17" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="1230" y="51" class="status-text">未完成</text>
+  <rect x="1305" y="30" width="62" height="34" rx="17" fill="#f4f5f6" stroke="#777777" stroke-dasharray="5 4"/>
+  <text x="1336" y="51" class="status-text">v0.2</text>
+
+  <rect x="34" y="96" width="1332" height="49" rx="10" fill="#f0f1f3" stroke="#111111"/>
+  <text x="54" y="126" font-size="12" font-weight="800">固定工程边界</text>
+  <text x="223" y="127" font-size="15" font-weight="750">Page</text>
+  <path d="M282 121 H340" class="arrow-line"/>
+  <text x="365" y="127" font-size="15" font-weight="750">Feature / Use Case</text>
+  <path d="M526 121 H584" class="arrow-line"/>
+  <text x="608" y="127" font-size="15" font-weight="750">Repository</text>
+  <path d="M704 121 H762" class="arrow-line"/>
+  <text x="786" y="127" font-size="15" font-weight="750">Mapper</text>
+  <path d="M857 121 H915" class="arrow-line"/>
+  <text x="939" y="127" font-size="15" font-weight="750">Platform Adapter</text>
+  <text x="1192" y="126" font-size="11" fill="#555555">页面不直连云端或平台 API</text>
+
+  <!-- 01 治理与设计 -->
+  <rect x="34" y="165" width="1332" height="128" rx="12" fill="#f7f8f9" stroke="#c9cdd2"/>
+  <rect x="34" y="165" width="180" height="128" rx="12" fill="#e7e9ec" stroke="#111111"/>
+  <text x="54" y="203" class="lane-title">01 治理与设计</text>
+  <text x="54" y="228" class="lane-sub">规则、范围与信任边界</text>
+  <rect x="54" y="250" width="98" height="24" rx="12" fill="#111111"/>
+  <text x="103" y="266" class="status-text done-text">阶段完成</text>
+
+  <rect x="247" y="189" width="250" height="80" rx="9" fill="#111111"/>
+  <text x="372" y="220" class="node-title done-text">Git / GitHub Governance</text>
+  <text x="372" y="243" class="node-sub done-text">短分支 · PR · Ruleset · OP 日志</text>
+  <path d="M500 229 H545" class="arrow-line"/>
+  <rect x="550" y="189" width="250" height="80" rx="9" fill="#111111"/>
+  <text x="675" y="220" class="node-title done-text">产品 MVP 与页面流程</text>
+  <text x="675" y="243" class="node-sub done-text">四主入口 · 验收条件 · 延后项</text>
+  <path d="M803 229 H848" class="arrow-line"/>
+  <rect x="853" y="189" width="250" height="80" rx="9" fill="#111111"/>
+  <text x="978" y="220" class="node-title done-text">身份 / ACL / 同步设计基线</text>
+  <text x="978" y="243" class="node-sub done-text">邀请码边界 · 本地优先 · 最小权限目标</text>
+  <path d="M1106 229 H1151" class="arrow-line"/>
+  <rect x="1156" y="189" width="178" height="80" rx="9" fill="#111111"/>
+  <text x="1245" y="220" class="node-title done-text">独立 Review</text>
+  <text x="1245" y="243" class="node-sub done-text">CI 与只读审查闭环</text>
+
+  <!-- 02 工程与质量 -->
+  <path d="M205 293 V320" class="arrow-line"/>
+  <rect x="34" y="322" width="1332" height="135" rx="12" fill="#f7f8f9" stroke="#c9cdd2"/>
+  <rect x="34" y="322" width="180" height="135" rx="12" fill="#e7e9ec" stroke="#111111"/>
+  <text x="54" y="360" class="lane-title">02 工程与质量</text>
+  <text x="54" y="385" class="lane-sub">可复现工具链与骨架</text>
+  <rect x="54" y="413" width="98" height="24" rx="12" fill="#111111"/>
+  <text x="103" y="429" class="status-text done-text">阶段完成</text>
+
+  <rect x="247" y="347" width="238" height="84" rx="9" fill="#111111"/>
+  <text x="366" y="377" class="node-title done-text">便携 Node / npm Wrapper</text>
+  <text x="366" y="401" class="node-sub done-text">22.23.1 · 进程隔离 · 工作树缓存</text>
+  <path d="M488 389 H525" class="arrow-line"/>
+  <rect x="530" y="347" width="238" height="84" rx="9" fill="#111111"/>
+  <text x="649" y="377" class="node-title done-text">uni-app 应用骨架</text>
+  <text x="649" y="401" class="node-sub done-text">Vue 3 · TypeScript · Pinia</text>
+  <path d="M771 389 H808" class="arrow-line"/>
+  <rect x="813" y="347" width="238" height="84" rx="9" fill="#111111"/>
+  <text x="932" y="377" class="node-title done-text">质量门禁</text>
+  <text x="932" y="401" class="node-sub done-text">strict TS · ESLint · Vitest · H5</text>
+  <path d="M1054 389 H1091" class="arrow-line"/>
+  <rect x="1096" y="347" width="238" height="84" rx="9" fill="#111111"/>
+  <text x="1215" y="377" class="node-title done-text">依赖安全补丁</text>
+  <text x="1215" y="401" class="node-sub done-text">Vitest 3.2.7 · critical 归零</text>
+
+  <!-- 03 领域与应用 -->
+  <path d="M205 457 V484" class="arrow-line"/>
+  <rect x="34" y="486" width="1332" height="157" rx="12" fill="#f7f8f9" stroke="#c9cdd2"/>
+  <rect x="34" y="486" width="180" height="157" rx="12" fill="#e7e9ec" stroke="#111111"/>
+  <text x="54" y="524" class="lane-title">03 领域与应用</text>
+  <text x="54" y="549" class="lane-sub">纯领域规则到 Use Case</text>
+  <rect x="54" y="596" width="98" height="24" rx="12" fill="#ffffff" stroke="#111111"/>
+  <text x="103" y="612" class="status-text">持续实施</text>
+
+  <rect x="247" y="511" width="205" height="106" rx="9" fill="#111111"/>
+  <text x="349" y="543" class="node-title done-text">FocusSession 领域模型</text>
+  <text x="349" y="566" class="node-sub done-text">IDLE / RUNNING</text>
+  <text x="349" y="584" class="node-sub done-text">60000ms 保存边界</text>
+  <path d="M455 564 H487" class="arrow-line"/>
+  <rect x="492" y="511" width="205" height="106" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="594" y="543" class="node-title">打卡领域模型</text>
+  <text x="594" y="566" class="node-sub">每日唯一性</text>
+  <text x="594" y="584" class="node-sub">状态与 0–140 字</text>
+  <path d="M700 564 H732" class="arrow-line"/>
+  <rect x="737" y="511" width="205" height="106" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="839" y="543" class="node-title">身份与会话 Use Case</text>
+  <text x="839" y="566" class="node-sub">邀请码兑换 · 登录</text>
+  <text x="839" y="584" class="node-sub">无公开注册</text>
+  <path d="M945 564 H977" class="arrow-line"/>
+  <rect x="982" y="511" width="205" height="106" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="1084" y="543" class="node-title">业务 Use Case</text>
+  <text x="1084" y="566" class="node-sub">专注 · 打卡</text>
+  <text x="1084" y="584" class="node-sub">删除确认 · 本地统计</text>
+  <path d="M1190 564 H1222" class="arrow-line"/>
+  <rect x="1227" y="511" width="107" height="106" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="1280" y="548" class="node-title">业务 Pinia</text>
+  <text x="1280" y="572" class="node-sub">Store 状态</text>
+  <text x="1280" y="590" class="node-sub">页面编排</text>
+
+  <!-- 04 数据与同步 -->
+  <path d="M205 643 V670" class="arrow-line"/>
+  <rect x="34" y="672" width="1332" height="169" rx="12" fill="#f7f8f9" stroke="#c9cdd2"/>
+  <rect x="34" y="672" width="180" height="169" rx="12" fill="#e7e9ec" stroke="#111111"/>
+  <text x="54" y="710" class="lane-title">04 数据与同步</text>
+  <text x="54" y="735" class="lane-sub">本地优先基础设施</text>
+  <rect x="54" y="790" width="98" height="24" rx="12" fill="#ffffff" stroke="#111111"/>
+  <text x="103" y="806" class="status-text">未实施</text>
+
+  <rect x="247" y="697" width="190" height="116" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="342" y="730" class="node-title">Repository 契约</text>
+  <text x="342" y="754" class="node-sub">领域类型 · 本地先读</text>
+  <text x="342" y="774" class="node-sub">SDK 类型不越界</text>
+  <path d="M440 755 H467" class="arrow-line"/>
+  <rect x="472" y="697" width="190" height="116" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="567" y="730" class="node-title">本地持久化</text>
+  <text x="567" y="754" class="node-sub">Platform Adapter</text>
+  <text x="567" y="774" class="node-sub">离线首要可用</text>
+  <path d="M665 755 H692" class="arrow-line"/>
+  <rect x="697" y="697" width="190" height="116" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="792" y="730" class="node-title">Mapper</text>
+  <text x="792" y="754" class="node-sub">领域 ↔ LeanCloud</text>
+  <text x="792" y="774" class="node-sub">兼容与默认值待设计</text>
+  <path d="M890 755 H917" class="arrow-line"/>
+  <rect x="922" y="697" width="190" height="116" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="1017" y="730" class="node-title">LeanCloud / ACL</text>
+  <text x="1017" y="754" class="node-sub">数据类 · 可见性待批准</text>
+  <text x="1017" y="774" class="node-sub">邀请码执行边界待实现</text>
+  <path d="M1115 755 H1142" class="arrow-line"/>
+  <rect x="1147" y="697" width="187" height="116" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="1240" y="730" class="node-title">同步状态机</text>
+  <text x="1240" y="754" class="node-sub">队列 · 重试 · 状态反馈</text>
+  <text x="1240" y="774" class="node-sub">冲突规则待逐实体批准</text>
+
+  <!-- 05 页面与交付 -->
+  <path d="M205 841 V868" class="arrow-line"/>
+  <rect x="34" y="870" width="1332" height="183" rx="12" fill="#f7f8f9" stroke="#c9cdd2"/>
+  <rect x="34" y="870" width="180" height="183" rx="12" fill="#e7e9ec" stroke="#111111"/>
+  <text x="54" y="908" class="lane-title">05 页面与交付</text>
+  <text x="54" y="933" class="lane-sub">用户界面、平台与 APK</text>
+  <rect x="54" y="1002" width="98" height="24" rx="12" fill="#ffffff" stroke="#111111"/>
+  <text x="103" y="1018" class="status-text">持续实施</text>
+
+  <rect x="247" y="895" width="170" height="61" rx="9" fill="#111111"/>
+  <text x="332" y="922" class="node-title done-text">应用启动 / 骨架首页</text>
+  <text x="332" y="942" class="node-sub done-text">空 AppID · 无业务调用</text>
+  <path d="M420 925 H447" class="arrow-line"/>
+  <rect x="452" y="895" width="170" height="61" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="537" y="922" class="node-title">今日</text>
+  <text x="537" y="942" class="node-sub">概览 · 快速开始</text>
+  <path d="M625 925 H652" class="arrow-line"/>
+  <rect x="657" y="895" width="170" height="61" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="742" y="922" class="node-title">专注</text>
+  <text x="742" y="942" class="node-sub">正计时 · 结束判定</text>
+  <path d="M830 925 H857" class="arrow-line"/>
+  <rect x="862" y="895" width="170" height="61" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="947" y="922" class="node-title">小队</text>
+  <text x="947" y="942" class="node-sub">每日打卡 · 三人协作</text>
+  <path d="M1035 925 H1062" class="arrow-line"/>
+  <rect x="1067" y="895" width="267" height="61" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="1200" y="922" class="node-title">我的</text>
+  <text x="1200" y="942" class="node-sub">历史 · 日周月统计 · 同步状态</text>
+
+  <rect x="247" y="974" width="235" height="55" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="364" y="1000" class="node-title">HBuilderX / Android SDK</text>
+  <text x="364" y="1018" class="node-sub">版本与安装待审核</text>
+  <path d="M485 1001 H530" class="arrow-line"/>
+  <rect x="535" y="974" width="235" height="55" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="652" y="1000" class="node-title">真机与平台冒烟</text>
+  <text x="652" y="1018" class="node-sub">登录 · 离线 · 重连 · 文件</text>
+  <path d="M773 1001 H818" class="arrow-line"/>
+  <rect x="823" y="974" width="235" height="55" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="940" y="1000" class="node-title">包名 / 签名 / 权限</text>
+  <text x="940" y="1018" class="node-sub">全部待独立审核</text>
+  <path d="M1061 1001 H1106" class="arrow-line"/>
+  <rect x="1111" y="974" width="223" height="55" rx="9" fill="#ffffff" stroke="#111111" stroke-width="2"/>
+  <text x="1222" y="1000" class="node-title">APK 验收与私下分发</text>
+  <text x="1222" y="1018" class="node-sub">不公开注册、不公开服务</text>
+
+  <!-- v0.2 延后区 -->
+  <rect x="34" y="1074" width="1332" height="50" rx="10" fill="#f4f5f6" stroke="#777777" stroke-dasharray="7 5"/>
+  <text x="54" y="1104" font-size="12" font-weight="800">v0.2 延后能力</text>
+  <text x="220" y="1104" font-size="12">独立留言</text>
+  <text x="345" y="1104" font-size="12">·</text>
+  <text x="380" y="1104" font-size="12">笔记</text>
+  <text x="470" y="1104" font-size="12">·</text>
+  <text x="505" y="1104" font-size="12">错题</text>
+  <text x="595" y="1104" font-size="12">·</text>
+  <text x="630" y="1104" font-size="12">附件</text>
+  <text x="720" y="1104" font-size="12">·</text>
+  <text x="755" y="1104" font-size="12">回复与扩展协作</text>
+  <text x="1160" y="1104" font-size="10" fill="#555555">延后不等于取消</text>
+</svg>

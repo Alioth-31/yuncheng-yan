@@ -95,3 +95,15 @@
 - 验证：最终 fresh npm ci、type-check、lint、test:run（2 个文件、12/12）、build:h5、check、wrapper 实进程测试、Governance fixtures、origin/main dirty CI 均退出码 0；PowerShell parser、Hook sh -n、领域 AST/依赖扫描、范围/日志/索引与 tracked/untracked diff 审计均退出码 0；TDD RED/GREEN 与 readonly/freeze mutation 证据详见 TASK-0401-focus-domain-report.md；未运行 HBuilderX、Android 或真机验证
 - 风险：时间戳由未来调用方提供；本任务只拒绝早于 startedAt 的 now/completedAt，不定义时钟回拨后的 UI 恢复；后台、进程恢复、持久化、同步、页面和统计仍未实现
 - 下一步：总控只读审查完整报告与未暂存 diff，复核验证后再按用户授权执行暂存、提交、推送、PR 和合并
+
+## OP-20260823-003
+- 时间：2026-08-23T02:05:35+08:00
+- 任务：TASK-0005 README 技术路线与实现进度图
+- 执行者：Codex
+- 分支：agent/TASK-0005-readme-roadmap-visual
+- 批准阶段：用户已确认采用分层架构蓝图 A；总控复核与独立 Review 均通过，获准进入暂存与提交
+- 变更：将已批准的分层架构蓝图 A 重建为固定白色画布的仓库原生静态 SVG；在 README 当前状态后新增可点击路线图、图例与 main 事实口径，并修正已合并任务、FocusSession 边界、Vitest 3.2.7 和 npm audit 摘要
+- 文件：README.md、docs/assets/technology-roadmap.svg、docs/tasks/TASK-0005_README_ROADMAP.md、CHANGELOG.md、docs/operations/PROJECT_LOG.md
+- 验证：PowerShell XML parser、SVG 禁止项/层级/节点状态扫描与 README 链接/alt/fact 检查均退出码 0；Edge headless 在仓库外渲染 1400×1150 PNG 退出码 0，原始分辨率视觉检查无遮挡、截断、箭头错位或中文乱码；git diff --check、未跟踪文件 whitespace 包装检查、Governance dirty CI（BaseRef main）、日志历史前缀/唯一 OP、独立敏感扫描、精确五文件范围、空索引及 package/lock/源码/配置零差异检查均退出码 0
+- 风险：图示是 main 实现状态的静态快照，后续节点合入后必须同步更新；未在 GitHub 远端页面实测渲染，未运行 HBuilderX、Android、真机或业务验证
+- 下一步：提交后推送短分支并创建 Draft PR，等待 GitHub Governance 与 PR 级只读审查后再合并
