@@ -35,3 +35,15 @@
 - 验证：已运行 git diff --check（退出码 0）、git status --short（退出码 0）和 git diff --stat（退出码 0）；完整命令、退出码与结果写入 D:\Codex\artifacts\intermediate\yunchengyan-phase1\TASK-0101-report.md；未运行代码、LeanCloud、HBuilderX、Android 或真机验证
 - 风险：账号校验、计时异常、打卡跨日、统计展示、同步冲突及 LeanCloud 类/ACL 仍待决；状态、路线图和决策记录留待后续事实回写任务统一更新
 - 下一步：控制线程与用户审阅；批准后再由根任务按授权执行暂存及后续 Git 流程
+
+## OP-20260822-001
+- 时间：2026-08-22T22:12:19+08:00
+- 任务：TASK-0002 修复 rebase/force-push 后的 Governance 基线选择
+- 执行者：Codex
+- 分支：agent/TASK-0002-governance-force-push
+- 批准阶段：文件生成，待用户批准暂存
+- 变更：新增纯 PowerShell Governance 基线解析器；agent/** push 固定比较 origin/main，main push 保留 before 基线及首次推送回退，pull_request 使用 PR base SHA
+- 文件：scripts/Resolve-GovernanceBaseRef.ps1、scripts/Test-Governance.Tests.ps1、.github/workflows/governance.yml、docs/operations/PROJECT_LOG.md
+- 验证：powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-Governance.Tests.ps1（退出码 0，含 resolver 表驱动用例与完整治理夹具）；powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-Governance.ps1 -Mode Ci -BaseRef 99605091532e0a9c86f3c18391924e89bedc25a9（退出码 0）；resolver parser（退出码 0）；pwsh resolver 兼容检查（退出码 0）；git diff --check（退出码 0）
+- 风险：GitHub Actions 的真实 push/rebase 事件仍待由受控 PR 运行验证；未暂存、未提交、未推送
+- 下一步：控制任务与用户审阅四文件摘要，批准后才暂存并展示 staged diff，再继续提交/推送门禁
