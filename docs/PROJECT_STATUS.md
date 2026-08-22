@@ -4,11 +4,11 @@
 
 ## 当前阶段
 
-- 阶段：阶段 1，工程骨架依赖治理。
-- 分支：`agent/TASK-0004-vitest-security-patch`。
-- 基线：`2384968acd13205ad1496d6b26f505fa2b2b0aa4`。
-- `TASK-0101`、`TASK-0301` 与 `TASK-0003` 已合并。
-- TASK-0004 已将 Vitest 精确升级至 3.2.7 并清除唯一 critical，待控制任务最终审查、提交与 PR。
+- 阶段：阶段 3 产品功能的首个领域切片；尚未进入页面或数据接入。
+- 分支：`agent/TASK-0401-focus-domain-state-machine`。
+- 基线：`1f6e35f46898b56f0bf673f90b3f3c0d8eed34bc`。
+- `TASK-0101`、`TASK-0301`、工程骨架与 `TASK-0004` Vitest 安全补丁已合并到 `main`。
+- TASK-0401 已实现并验证最小专注领域模型与测试，待 PR 治理检查和合并。
 
 ## 已建立
 
@@ -18,10 +18,11 @@
 - 精确 pin `@types/node@20.16.13`；现有 Pinia 测试同时由 `vue-tsc` 静态检查和 Vitest 执行。
 - 精确 pin `vitest@3.2.7`；保持 Vite 5.2.8、vite-node 3.2.4、DCloud cohort、Vue 与 TypeScript 锁定结果不变。
 - 每 app 独立 Pinia 工厂、唯一静态首页、空 AppID 与最小 manifest。
+- 纯 TypeScript `FocusSession`：`IDLE` / `RUNNING`、显式时间戳 elapsed、用户主动 end、59999/60000 毫秒边界和不可变完成记录。
 
 ## 尚未实现
 
-- TASK-0101 定义的身份入口及“今日、专注、小队、我的”业务页面。
+- TASK-0101 定义的身份入口及“今日、专注、小队、我的”业务页面；专注目前只有领域模型。
 - Repository、Mapper、Platform Adapter 与本地同步基础设施。
 - LeanCloud 接入、数据模型、ACL、凭证和真实环境验证。
 - Android 包名、权限、SDK、签名、APK/AAB 与真机流程。
@@ -31,3 +32,4 @@
 - 固定依赖树有 66 个 npm audit 项（0 critical、13 high）；`--omit=dev` 后仍为 45 个（0 critical、11 high）。剩余项跨 DCloud/Vite 及其传递依赖，需按兼容 cohort 独立治理，不能使用 `npm audit fix` 或 broad overrides。
 - H5 构建不能替代 HBuilderX、Android 或真机验证。
 - LeanCloud 类/ACL、三人可见性、邀请码受控执行和逐实体冲突策略仍待批准。
+- 专注时间戳由未来调用方提供；倒序时间只会作为领域输入无效，本任务未定义后台、进程恢复、单调时钟或 UI 恢复策略。

@@ -2,9 +2,9 @@
 
 ## 当前任务
 
-TASK-0004 在 `agent/TASK-0004-vitest-security-patch`、基线 `2384968acd13205ad1496d6b26f505fa2b2b0aa4` 上只处理 Vitest 安全补丁。TASK-0101、TASK-0301 与 TASK-0003 已合并到该基线。
+TASK-0401 在 `agent/TASK-0401-focus-domain-state-machine`、基线 `1f6e35f46898b56f0bf673f90b3f3c0d8eed34bc` 上建立最小专注领域状态机。TASK-0101、TASK-0301、TASK-0003 与 TASK-0004 已合并到该基线。
 
-实施 Agent 只写工作树，不暂存、提交、推送、创建 PR 或修改 Git/npm 持久配置；这些动作由控制任务另行批准和执行。
+实施 Agent 只写工作树，不暂存、提交、推送、创建 PR 或修改 Git/npm 持久配置；最终 Review 与 Git/PR 流程由总控执行。
 
 ## 工具链
 
@@ -26,24 +26,36 @@ TASK-0004 在 `agent/TASK-0004-vitest-security-patch`、基线 `2384968acd13205a
 - `vitest.config.mts` 只启用 node 环境和 `src/**/*.spec.ts`，未启用 UI、API 或 Browser server。
 - 首页只显示“云程研”和“工程骨架已建立”。
 - manifest AppID 为空，不含 Android permissions、包名、SDK 或签名。
-- 尚无业务 store、LeanCloud、Repository、Mapper、Adapter、网络或 `uni.*` 调用。
+- `src/features/focus/domain/focus-session.ts` 无 import，仅定义 `IDLE` / `RUNNING`、`start`、时间戳 `elapsed` 和用户主动 `end`。
+- 59999 毫秒结束返回无记录的 `DISCARDED_SHORT_SESSION`；60000 与 60001 毫秒均返回 `COMPLETED`。
+- `FocusRecord` 只含 readonly 的 `startedAt`、`completedAt`、`durationMs`，并由 `Object.freeze` 在运行时冻结。
+- `now` 或 `completedAt` 早于 `startedAt` 时抛 `TIMESTAMP_BEFORE_START`，不结束当前会话，也不定义 UI 恢复。
+- 领域实现不依赖 `uni.*`、Pinia、LeanCloud、Repository、Adapter、本地存储、同步或页面。
+- 尚无业务 store、LeanCloud、Repository、Mapper、Platform Adapter、网络或页面级 `uni.*` 调用。
 
-## 审查与验证入口
+## TDD 与审查入口
+
+专注测试覆盖 start、重复 start、elapsed、倒序时间、59999 丢弃、60000/60001 生成、完成字段、结束回到 IDLE、运行时冻结、readonly 编译门和 IDLE 非法动作。完整 RED/GREEN 证据与最终命令见：
+
+`D:\Codex\artifacts\intermediate\yunchengyan-phase2\TASK-0401-focus-domain-report.md`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.Tests.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm ci
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm audit --json
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm audit --omit=dev --json
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm run check
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm run type-check
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm run lint
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm run test:run
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm run build:h5
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.ps1 -Tool npm run check
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Invoke-ProjectNode.Tests.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-Governance.Tests.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-Governance.ps1 -Mode Ci -BaseRef origin/main
 ```
 
-完整 RED/GREEN 和验证证据见 `D:\Codex\artifacts\intermediate\yunchengyan-phase1\TASK-0004-vitest-security-report.md`。
+依赖补丁证据见 `D:\Codex\artifacts\intermediate\yunchengyan-phase1\TASK-0004-vitest-security-report.md`；专注领域 RED/GREEN 与最终验证证据见 `D:\Codex\artifacts\intermediate\yunchengyan-phase2\TASK-0401-focus-domain-report.md`。
 
 基线总审计 67 项时，唯一 critical 是 `vitest@3.2.4` 的 `GHSA-5xrq-8626-4rwp`；默认脚本和配置未启用其 UI/API/Browser server，但手工启用这些开发入口仍会形成可达路径。精确升级至 3.2.7 后总审计为 66 项（0 critical、13 high）；`--omit=dev` 前后均为 45 项（0 critical、11 high）。剩余风险需按 DCloud/Vite cohort 独立治理，不得运行 `npm audit fix`、broad overrides 或无验证的联动升级。
-
 ## 后续约束
 
-不要把 TASK-0101/TASK-0301 的待决建议当成实现授权。LeanCloud 类/ACL、三人可见性、邀请码受控执行、逐实体冲突、Android 包名/签名/SDK 均需独立批准；H5 构建也不证明 Android 或真机可用。
+TASK-0401 没有授权暂停/恢复、后台/杀进程/重启恢复、活动中主动放弃、短会话二次确认或取消恢复、单调时钟、平台时间 Adapter、Repository、持久化、LeanCloud、同步、页面/Pinia、统计聚合、科目/任务/备注或自动打卡。后续任务只能消费本领域契约，不得把这些排除项解释为已决定。

@@ -83,3 +83,15 @@
 - 验证：基线 npm audit 总计 67（唯一 critical 为 GHSA-5xrq-8626-4rwp）、omit-dev 45（0 critical）；修复后总计 66（0 critical）、omit-dev 45（0 critical）；wrapper、npm ci、聚焦 npm ls、TypeScript 4.9.5/@types-node 20.16.13、type-check、lint、test:run（1/1）、build:h5、check 均退出码 0；Vitest 无 CJS 警告，H5 无 uni is not a function；治理夹具、dirty CI、diff/敏感扫描与 lock diff 自审均退出码 0
 - 风险：默认测试配置未启用 Vitest UI/API/Browser server，原 critical 不经受控入口可达，但手工启用或暴露这些开发入口会使旧版本路径可达；总审计仍有 66 项，omit-dev 仍有 45 项（0 critical、11 high），不能视为无风险；H5 不证明 Android/真机可用
 - 下一步：交控制任务最终审查、提交、推送与 PR；剩余 DCloud/Vite 项另立 cohort 治理任务做可达性和多平台兼容验证，禁止 npm audit fix、broad overrides 与无验证联动升级
+
+## OP-20260823-002
+- 时间：2026-08-23T00:58:26+08:00
+- 任务：TASK-0401 最小专注领域模型与结束判定
+- 执行者：Codex
+- 分支：agent/TASK-0401-focus-domain-state-machine
+- 批准阶段：文件生成与本地验证，待总控 Review 和用户批准暂存
+- 变更：以 TDD 新增纯 TypeScript 的 IDLE/RUNNING 专注状态机、显式时间戳 elapsed、用户主动 end、59999/60000 毫秒结束边界、不可变 FocusRecord 与领域输入错误；同步更新任务授权的最小文档事实
+- 文件：src/features/focus/domain/focus-session.ts、src/features/focus/domain/__tests__/focus-session.spec.ts、docs/focus/FOCUS_DOMAIN.md、docs/tasks/TASK-0401_FOCUS_DOMAIN.md、docs/PROJECT_STATUS.md、docs/ARCHITECTURE.md、docs/ROADMAP.md、docs/AI_HANDOFF.md、CHANGELOG.md、docs/operations/PROJECT_LOG.md
+- 验证：最终 fresh npm ci、type-check、lint、test:run（2 个文件、12/12）、build:h5、check、wrapper 实进程测试、Governance fixtures、origin/main dirty CI 均退出码 0；PowerShell parser、Hook sh -n、领域 AST/依赖扫描、范围/日志/索引与 tracked/untracked diff 审计均退出码 0；TDD RED/GREEN 与 readonly/freeze mutation 证据详见 TASK-0401-focus-domain-report.md；未运行 HBuilderX、Android 或真机验证
+- 风险：时间戳由未来调用方提供；本任务只拒绝早于 startedAt 的 now/completedAt，不定义时钟回拨后的 UI 恢复；后台、进程恢复、持久化、同步、页面和统计仍未实现
+- 下一步：总控只读审查完整报告与未暂存 diff，复核验证后再按用户授权执行暂存、提交、推送、PR 和合并

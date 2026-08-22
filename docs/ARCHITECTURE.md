@@ -6,7 +6,7 @@
 
 模板 TypeScript 实际解析为 4.9.5；为使 Vitest/Vite 的 Node 类型链也能进入同一个 `vue-tsc` program，项目精确 pin `@types/node@20.16.13`。生产源码与 `src/**/*.spec.ts` 共用 `tsconfig.json`，不以排除测试来绕过静态错误。
 
-当前只建立应用启动、单页和测试工具链。LeanCloud、本地 Repository、同步状态机与 Platform Adapter 尚未实现。
+当前建立了应用启动、单页、测试工具链，以及不依赖平台或数据层的最小专注领域模型。LeanCloud、本地 Repository、同步状态机与 Platform Adapter 尚未实现。
 
 ## 依赖方向
 
@@ -39,7 +39,15 @@ Page -> Feature / Use Case -> Repository -> Mapper -> Platform Adapter
 - `src/main.ts` 每次 `createApp()` 都创建并安装独立 Pinia 实例，避免 SSR/多实例共享状态。
 - `src/stores/index.ts` 只提供 Pinia 工厂，不含业务 store。
 - `src/pages/index/index.vue` 是无状态骨架页，不调用网络、LeanCloud 或平台 API。
+- `src/features/focus/domain/focus-session.ts` 是纯 TypeScript 领域状态机，没有 import；只接收调用方时间戳并返回领域状态、错误或结束结果。
 - `@/* -> src/*` 是唯一项目别名；Vitest 使用 node 环境，测试源码同时接受 `vue-tsc` 静态检查和 Vitest 运行时执行。
+
+## 专注领域边界
+
+- 状态仅为 `IDLE` 与 `RUNNING`；`start`、`elapsed(now)` 和用户主动 `end(completedAt)` 是唯一动作。
+- elapsed 与最终时长都由传入时间戳相减得到。`now` 或 `completedAt` 早于 `startedAt` 时只返回领域输入错误，不定义 UI 恢复。
+- 少于 60000 毫秒的结束结果不含记录；达到或超过 60000 毫秒时生成运行时冻结且字段 readonly 的 `FocusRecord`。
+- `FocusRecord.completedAt` 只保留未来统计归属所需的完成时间戳；当前不实现统计、Repository、持久化、同步或时间平台适配。
 
 ## 安全与平台边界
 
