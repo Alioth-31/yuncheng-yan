@@ -9,9 +9,10 @@
 
 - 固定经典 uni-app Vue 3 + TypeScript 模板、Node/npm 与依赖锁文件。
 - 接入 Pinia、类型检查、ESLint、Vitest 和 H5 构建。
-- 以独立依赖治理任务评估固定 DCloud/Vitest 依赖树的 audit 项，在升级前验证模板、测试和 H5 兼容性。
+- TASK-0004 已以精确 Vitest 3.2.7 patch 清除唯一 critical，并保持现有模板、测试、Vite 与 H5 兼容性。
+- 剩余 DCloud/Vite audit 项按版本一致的 cohort 另立治理任务，先做可达性和多平台兼容验证，不使用自动修复或 broad overrides。
 - 保持首页无业务、无 LeanCloud、无网络和无平台调用。
-- 合并 TASK-0003 后，再以独立任务建立 Feature/Repository/Mapper/Platform Adapter 接口。
+- TASK-0004 经控制任务合并后，再以独立任务建立 Feature/Repository/Mapper/Platform Adapter 接口。
 
 ## 阶段 2：数据与平台冒烟（待批准）
 
