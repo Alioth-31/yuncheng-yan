@@ -4,6 +4,7 @@ param()
 $ErrorActionPreference = 'Stop'
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $productionScript = Join-Path $scriptRoot 'Test-Governance.ps1'
+$resolverScript = Join-Path $scriptRoot 'Resolve-GovernanceBaseRef.ps1'
 $preferredFixtureBase = 'D:\Codex\temp'
 $fixtureBase = if (Test-Path -LiteralPath $preferredFixtureBase -PathType Container) {
     [System.IO.Path]::GetFullPath($preferredFixtureBase)
@@ -67,6 +68,48 @@ function Invoke-Governance {
         return [pscustomobject]@{ ExitCode = $LASTEXITCODE; Output = ($output -join "`n") }
     }
     finally { $ErrorActionPreference = $previousErrorAction }
+}
+
+function Invoke-GovernanceBaseResolver {
+    param(
+        [string]$EventName,
+        [string]$PullRequestBaseSha,
+        [string]$PushBeforeSha,
+        [string]$GitRef
+    )
+    $arguments = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $resolverScript, '-EventName', $EventName, '-GitRef', $GitRef)
+    if (-not [string]::IsNullOrWhiteSpace($PullRequestBaseSha)) {
+        $arguments += @('-PullRequestBaseSha', $PullRequestBaseSha)
+    }
+    if (-not [string]::IsNullOrWhiteSpace($PushBeforeSha)) {
+        $arguments += @('-PushBeforeSha', $PushBeforeSha)
+    }
+    $previousErrorAction = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = 'Continue'
+        $output = & (Get-InvocationHost) @arguments 2>&1
+        return [pscustomobject]@{ ExitCode = $LASTEXITCODE; Output = ($output -join "`n") }
+    }
+    finally { $ErrorActionPreference = $previousErrorAction }
+}
+
+function Assert-ResolverResult {
+    param(
+        [pscustomobject]$Result,
+        [pscustomobject]$Case
+    )
+    if ($Case.ExpectedExitCode -eq 0) {
+        Assert-ExitCode -Actual $Result.ExitCode -Expected 0 -Name $Case.Name -Output $Result.Output
+        $actualOutput = $Result.Output.Trim()
+        if ($actualOutput -ne $Case.ExpectedOutput) {
+            throw ("{0}: expected output '{1}', got '{2}'." -f $Case.Name, $Case.ExpectedOutput, $actualOutput)
+        }
+        return
+    }
+
+    Assert-True ($Result.ExitCode -ne 0) ("{0}: expected a non-zero exit code. Output: {1}" -f $Case.Name, $Result.Output.Trim())
+    Assert-OutputContains -Output $Result.Output -Pattern $Case.ErrorPattern -Name $Case.Name
+    Write-Host ("[PASS] {0} (exit {1})" -f $Case.Name, $Result.ExitCode)
 }
 
 function Assert-SafeFixturePath {
@@ -138,6 +181,83 @@ try {
     Assert-True (Test-Path -LiteralPath $fixtureBase -PathType Container) 'The selected system temp base does not exist.'
     if (-not (Test-Path -LiteralPath $productionScript -PathType Leaf)) {
         throw ("RED: production script is intentionally missing: {0}" -f $productionScript)
+    }
+
+    $resolverCases = @(
+        [pscustomobject]@{
+            Name = 'agent push ignores unreachable before SHA'
+            EventName = 'push'
+            PullRequestBaseSha = ''
+            PushBeforeSha = 'b043b4994ccdd44beecca364856ad10b4021eb4a'
+            GitRef = 'refs/heads/agent/rebased-branch'
+            ExpectedExitCode = 0
+            ExpectedOutput = 'origin/main'
+            ErrorPattern = ''
+        },
+        [pscustomobject]@{
+            Name = 'main push uses non-zero before SHA'
+            EventName = 'push'
+            PullRequestBaseSha = ''
+            PushBeforeSha = '85f990d6f80ffeb74fbf38bb53a106c448df8476'
+            GitRef = 'refs/heads/main'
+            ExpectedExitCode = 0
+            ExpectedOutput = '85f990d6f80ffeb74fbf38bb53a106c448df8476'
+            ErrorPattern = ''
+        },
+        [pscustomobject]@{
+            Name = 'main first push uses origin main'
+            EventName = 'push'
+            PullRequestBaseSha = ''
+            PushBeforeSha = '0000000000000000000000000000000000000000'
+            GitRef = 'refs/heads/main'
+            ExpectedExitCode = 0
+            ExpectedOutput = 'origin/main'
+            ErrorPattern = ''
+        },
+        [pscustomobject]@{
+            Name = 'pull request uses base SHA'
+            EventName = 'pull_request'
+            PullRequestBaseSha = '99605091532e0a9c86f3c18391924e89bedc25a9'
+            PushBeforeSha = ''
+            GitRef = 'refs/pull/3/merge'
+            ExpectedExitCode = 0
+            ExpectedOutput = '99605091532e0a9c86f3c18391924e89bedc25a9'
+            ErrorPattern = ''
+        },
+        [pscustomobject]@{
+            Name = 'missing pull request base fails closed'
+            EventName = 'pull_request'
+            PullRequestBaseSha = ''
+            PushBeforeSha = ''
+            GitRef = 'refs/pull/3/merge'
+            ExpectedExitCode = 1
+            ExpectedOutput = ''
+            ErrorPattern = 'PullRequestBaseSha|base'
+        },
+        [pscustomobject]@{
+            Name = 'unknown event fails closed'
+            EventName = 'workflow_dispatch'
+            PullRequestBaseSha = ''
+            PushBeforeSha = ''
+            GitRef = 'refs/heads/main'
+            ExpectedExitCode = 1
+            ExpectedOutput = ''
+            ErrorPattern = 'event|unsupported'
+        },
+        [pscustomobject]@{
+            Name = 'unauthorized push ref fails closed'
+            EventName = 'push'
+            PullRequestBaseSha = ''
+            PushBeforeSha = '85f990d6f80ffeb74fbf38bb53a106c448df8476'
+            GitRef = 'refs/heads/feature/untrusted'
+            ExpectedExitCode = 1
+            ExpectedOutput = ''
+            ErrorPattern = 'push|ref|unsupported'
+        }
+    )
+    foreach ($case in $resolverCases) {
+        $resolverResult = Invoke-GovernanceBaseResolver -EventName $case.EventName -PullRequestBaseSha $case.PullRequestBaseSha -PushBeforeSha $case.PushBeforeSha -GitRef $case.GitRef
+        Assert-ResolverResult -Result $resolverResult -Case $case
     }
 
     Initialize-Fixture

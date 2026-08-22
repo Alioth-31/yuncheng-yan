@@ -32,17 +32,11 @@ jobs:
           GOVERNANCE_EVENT_NAME: ${{ github.event_name }}
           GOVERNANCE_PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           GOVERNANCE_PUSH_BEFORE_SHA: ${{ github.event.before }}
+          GOVERNANCE_GIT_REF: ${{ github.ref }}
         run: |
-          if ($env:GOVERNANCE_EVENT_NAME -eq 'pull_request') {
-            $baseRef = $env:GOVERNANCE_PR_BASE_SHA
-          }
-          else {
-            $baseRef = $env:GOVERNANCE_PUSH_BEFORE_SHA
-            if ([string]::IsNullOrWhiteSpace($baseRef) -or $baseRef -match '^0+$') {
-              $baseRef = 'origin/main'
-            }
-          }
-          if ([string]::IsNullOrWhiteSpace($baseRef)) {
-            throw 'Governance BaseRef was not provided for this event.'
-          }
+          $baseRef = ./scripts/Resolve-GovernanceBaseRef.ps1 `
+            -EventName $env:GOVERNANCE_EVENT_NAME `
+            -PullRequestBaseSha $env:GOVERNANCE_PR_BASE_SHA `
+            -PushBeforeSha $env:GOVERNANCE_PUSH_BEFORE_SHA `
+            -GitRef $env:GOVERNANCE_GIT_REF
           ./scripts/Test-Governance.ps1 -Mode Ci -BaseRef $baseRef
